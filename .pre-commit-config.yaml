@@ -6,6 +6,15 @@ repos:
     - id: end-of-file-fixer
     - id: check-yaml
     - id: check-added-large-files
+- repo: local
+  hooks:
+    - id: safety-check
+      name: Safety Check
+      entry: poetry run safety
+      args: [check]
+      language: system
+      verbose: false
+      pass_filenames: false
 - repo: https://github.com/python/black
   rev: 20.8b1
   hooks:
