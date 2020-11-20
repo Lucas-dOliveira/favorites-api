@@ -1,4 +1,4 @@
-from favortes_api import __version__
+from favorites_api import __version__
 
 
 def test_version():

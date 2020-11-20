@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "favortes-api"
+name = "favorites-api"
 version = "0.1.0"
 description = ""
 authors = ["Lucas de Oliveira <lucasvitalate@gmail.com>"]
