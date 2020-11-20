@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "favorites-api"
 version = "0.1.0"
-description = ""
+description = "Luizalabs Technical challenge - Favorites-API is the back-end responsible for storing the favorite products of the Magalu customers."
 authors = ["Lucas de Oliveira <lucasvitalate@gmail.com>"]
 
 [tool.black]
