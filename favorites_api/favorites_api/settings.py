@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 
+from dj_database_url import parse as parse_db_url
 from environs import Env
 
 env = Env()
@@ -70,7 +71,7 @@ WSGI_APPLICATION = "favorites_api.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}}
+DATABASES = {"default": parse_db_url(env("DATABASE_URL"))}
 
 
 # Password validation
