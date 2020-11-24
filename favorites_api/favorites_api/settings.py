@@ -74,6 +74,17 @@ WSGI_APPLICATION = "favorites_api.wsgi.application"
 DATABASES = {"default": parse_db_url(env("DATABASE_URL"))}
 
 
+# Cache
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": env("REDIS_URL"),
+        "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
+        "KEY_PREFIX": "django_orm",
+    }
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
