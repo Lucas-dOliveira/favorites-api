@@ -23,7 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", False)
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -79,6 +78,7 @@ WSGI_APPLICATION = "favorites_api.wsgi.application"
 
 DATABASES = {"default": parse_db_url(env("DATABASE_URL"))}
 
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", "*")
 
 # Cache
 
