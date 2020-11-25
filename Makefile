@@ -1,5 +1,5 @@
 shell:
-	poetry run python favorites_api/manage.py shell_plus
+	poetry run python favorites-api/manage.py shell_plus
 
 install:
 	poetry install
@@ -11,4 +11,4 @@ lint:
 	poetry run pre-commit install && poetry run pre-commit run -a -v
 
 test:
-	DJANGO_SETTINGS_MODULE=favorites_api.settings poetry run pytest -x -s favorites_api
+	DJANGO_SETTINGS_MODULE=favorites_api.settings poetry run pytest -x -s favorites-api
