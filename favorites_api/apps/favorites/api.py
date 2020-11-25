@@ -29,15 +29,15 @@ class FavoriteViewSet(viewsets.ViewSet, ExternalLuizalabsAPIMixin):
 
     def list(self, request, customer_pk, *args, **kwargs):
         qs = self.get_object(customer_pk).favorites.all()
-        products = [self.search_product(product.product_id) for product in qs]
+        products = [self.search_product(product.id) for product in qs]
 
         serializer_class = self.get_serializer_class(request)
         serializer = serializer_class(products, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, customer_pk, pk, *args, **kwargs):
-        favorite = self.get_object(customer_pk).favorites.get(product_id=pk)
-        detailed_product = self.search_product(favorite.product_id)
+        favorite = self.get_object(customer_pk).favorites.get(id=pk)
+        detailed_product = self.search_product(favorite.id)
 
         serializer_class = self.get_serializer_class(request)
         serializer = serializer_class(detailed_product, many=False)
@@ -49,12 +49,12 @@ class FavoriteViewSet(viewsets.ViewSet, ExternalLuizalabsAPIMixin):
         favorite_serializer = serializer_class(data=request.data)
         favorite_serializer.is_valid(raise_exception=True)
 
-        product_id = request.data.get("product_id")
+        id = request.data.get("id")
 
-        product = get_object_or_404(Product, product_id=product_id)
+        product = get_object_or_404(Product, id=id)
 
         customer = self.get_object(customer_pk)
-        if not customer.favorites.filter(product_id=product_id).exists():
+        if not customer.favorites.filter(id=id).exists():
             customer.favorites.add(product)
             return Response(status=status.HTTP_201_CREATED)
         else:
@@ -63,13 +63,13 @@ class FavoriteViewSet(viewsets.ViewSet, ExternalLuizalabsAPIMixin):
     def destroy(self, request, customer_pk, pk, *args, **kwargs):
         serializer_class = self.get_serializer_class(request)
 
-        favorite_serializer = serializer_class(data={"product_id": pk})
+        favorite_serializer = serializer_class(data={"id": pk})
         favorite_serializer.is_valid(raise_exception=True)
 
-        product = get_object_or_404(Product, product_id=pk)
+        product = get_object_or_404(Product, id=pk)
 
         customer = self.get_object(customer_pk)
-        if customer.favorites.filter(product_id=pk).exists():
+        if customer.favorites.filter(id=pk).exists():
             customer.favorites.remove(product)
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:

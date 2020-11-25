@@ -14,48 +14,46 @@ def external_luizalabs_api_mixin():
 
 @mock.patch("apps.favorites.mixins.cache")
 @mock.patch("apps.favorites.mixins.env")
-def test_external_luizalabs_store_empty_product(
-    env_mock, cache_mock, external_luizalabs_api_mixin, product_id
-):
+def test_external_luizalabs_store_empty_product(env_mock, cache_mock, external_luizalabs_api_mixin, id):
     timeout = 10
     env_mock.int.return_value = timeout
 
-    external_luizalabs_api_mixin.store_product_on_cache(product_id, {})
-    cache_mock.add.assert_called_once_with(product_id, {}, timeout)
+    external_luizalabs_api_mixin.store_product_on_cache(id, {})
+    cache_mock.add.assert_called_once_with(id, {}, timeout)
 
 
 @mock.patch("apps.favorites.mixins.cache")
 @mock.patch("apps.favorites.mixins.env")
 def test_external_luizalabs_store_product(
-    env_mock, cache_mock, external_luizalabs_api_mixin, product_id, luizalabs_product
+    env_mock, cache_mock, external_luizalabs_api_mixin, id, luizalabs_product
 ):
     timeout = 10
     env_mock.int.return_value = timeout
 
-    external_luizalabs_api_mixin.store_product_on_cache(product_id, luizalabs_product)
-    cache_mock.add.assert_called_once_with(product_id, luizalabs_product, timeout)
+    external_luizalabs_api_mixin.store_product_on_cache(id, luizalabs_product)
+    cache_mock.add.assert_called_once_with(id, luizalabs_product, timeout)
 
 
 @mock.patch("apps.favorites.mixins.cache")
 def test_external_luizalabs_search_product_on_cache(
-    cache_mock, external_luizalabs_api_mixin, product_id, luizalabs_product
+    cache_mock, external_luizalabs_api_mixin, id, luizalabs_product
 ):
     cache_mock.get.return_value = luizalabs_product
 
-    assert external_luizalabs_api_mixin.search_product_on_cache(product_id) == luizalabs_product
-    cache_mock.get.assert_called_once_with(product_id)
+    assert external_luizalabs_api_mixin.search_product_on_cache(id) == luizalabs_product
+    cache_mock.get.assert_called_once_with(id)
 
 
 @responses.activate
 @mock.patch("apps.favorites.mixins.env")
 @mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.store_product_on_cache")
 def test_external_luizalabs_search_product_on_external_api(
-    store_product_mock, env_mock, external_luizalabs_api_mixin, product_id, luizalabs_product
+    store_product_mock, env_mock, external_luizalabs_api_mixin, id, luizalabs_product
 ):
     url = "http://local-challenge-api.luizalabs.com"
     env_mock.return_value = url
 
-    expected_url = f"{url}/api/product/{product_id}/"
+    expected_url = f"{url}/api/product/{id}/"
     responses.add(
         responses.GET,
         expected_url,
@@ -63,23 +61,23 @@ def test_external_luizalabs_search_product_on_external_api(
         json=luizalabs_product,
     )
 
-    response = external_luizalabs_api_mixin.search_product_on_external_api(product_id)
+    response = external_luizalabs_api_mixin.search_product_on_external_api(id)
     assert response == luizalabs_product
-    store_product_mock.assert_called_once_with(product_id, luizalabs_product)
+    store_product_mock.assert_called_once_with(id, luizalabs_product)
 
 
 @responses.activate
 @mock.patch("apps.favorites.mixins.env")
 @mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.store_product_on_cache")
 def test_external_luizalabs_search_invalid_product_on_external_api(
-    store_product_mock, env_mock, external_luizalabs_api_mixin, product_id
+    store_product_mock, env_mock, external_luizalabs_api_mixin, id
 ):
     url = "http://local-challenge-api.luizalabs.com"
     env_mock.return_value = url
 
-    expected_response = {"error_message": f"Product {product_id} not found", "code": "not_found"}
+    expected_response = {"error_message": f"Product {id} not found", "code": "not_found"}
 
-    expected_url = f"{url}/api/product/{product_id}/"
+    expected_url = f"{url}/api/product/{id}/"
     responses.add(
         responses.GET,
         expected_url,
@@ -87,50 +85,50 @@ def test_external_luizalabs_search_invalid_product_on_external_api(
         json=expected_response,
     )
 
-    response = external_luizalabs_api_mixin.search_product_on_external_api(product_id)
+    response = external_luizalabs_api_mixin.search_product_on_external_api(id)
     assert response == {}
-    store_product_mock.assert_called_once_with(product_id, {})
+    store_product_mock.assert_called_once_with(id, {})
 
 
 @mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product_on_cache")
 @mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product_on_external_api")
 def test_external_luizalabs_search_product_exists_on_cache(
-    search_external_api_mock, search_cache_mock, external_luizalabs_api_mixin, product_id, luizalabs_product
+    search_external_api_mock, search_cache_mock, external_luizalabs_api_mixin, id, luizalabs_product
 ):
     search_cache_mock.return_value = luizalabs_product
-    data = external_luizalabs_api_mixin.search_product(product_id)
+    data = external_luizalabs_api_mixin.search_product(id)
 
     assert data == luizalabs_product
-    search_cache_mock.assert_called_once_with(product_id)
+    search_cache_mock.assert_called_once_with(id)
     search_external_api_mock.assert_not_called()
 
 
 @mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product_on_cache")
 @mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product_on_external_api")
 def test_external_luizalabs_search_product_exists_empty_on_cache(
-    search_external_api_mock, search_cache_mock, external_luizalabs_api_mixin, product_id
+    search_external_api_mock, search_cache_mock, external_luizalabs_api_mixin, id
 ):
     search_cache_mock.return_value = {}
-    data = external_luizalabs_api_mixin.search_product(product_id)
+    data = external_luizalabs_api_mixin.search_product(id)
 
     assert data == {}
-    search_cache_mock.assert_called_once_with(product_id)
+    search_cache_mock.assert_called_once_with(id)
     search_external_api_mock.assert_not_called()
 
 
 @mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product_on_cache")
 @mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product_on_external_api")
 def test_external_luizalabs_search_product_exists_on_api(
-    search_external_api_mock, search_cache_mock, external_luizalabs_api_mixin, product_id, luizalabs_product
+    search_external_api_mock, search_cache_mock, external_luizalabs_api_mixin, id, luizalabs_product
 ):
     search_cache_mock.return_value = None
     search_external_api_mock.return_value = luizalabs_product
 
-    data = external_luizalabs_api_mixin.search_product(product_id)
+    data = external_luizalabs_api_mixin.search_product(id)
 
     assert data == luizalabs_product
-    search_cache_mock.assert_called_once_with(product_id)
-    search_external_api_mock.assert_called_once_with(product_id)
+    search_cache_mock.assert_called_once_with(id)
+    search_external_api_mock.assert_called_once_with(id)
 
 
 @mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product_on_cache")
@@ -139,16 +137,16 @@ def test_external_luizalabs_search_product_do_not_exists_on_api(
     search_external_api_mock,
     search_cache_mock,
     external_luizalabs_api_mixin,
-    product_id,
+    id,
 ):
     search_cache_mock.return_value = None
     search_external_api_mock.return_value = {}
 
-    data = external_luizalabs_api_mixin.search_product(product_id)
+    data = external_luizalabs_api_mixin.search_product(id)
 
     assert data == {}
-    search_cache_mock.assert_called_once_with(product_id)
-    search_external_api_mock.assert_called_once_with(product_id)
+    search_cache_mock.assert_called_once_with(id)
+    search_external_api_mock.assert_called_once_with(id)
 
 
 @pytest.mark.parametrize(
@@ -160,9 +158,9 @@ def test_external_luizalabs_search_product_do_not_exists_on_api(
 )
 @mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product")
 def test_external_luizalabs_check_product_existence(
-    search_product_mock, search_output, expected_response, external_luizalabs_api_mixin, product_id
+    search_product_mock, search_output, expected_response, external_luizalabs_api_mixin, id
 ):
     search_product_mock.return_value = search_output
 
-    assert external_luizalabs_api_mixin.check_product_existence(product_id) == expected_response
-    search_product_mock.assert_called_once_with(product_id)
+    assert external_luizalabs_api_mixin.check_product_existence(id) == expected_response
+    search_product_mock.assert_called_once_with(id)

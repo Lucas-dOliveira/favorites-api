@@ -23,32 +23,30 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer, ExternalLuizalabsAPIMixin):
-    def validate_product_id(self, product_id):
-        if self.check_product_existence(product_id):
-            return product_id
-        raise serializers.ValidationError(
-            f"The product_id {product_id} wasn't found at Luizalabs products API"
-        )
+    def validate_id(self, id):
+        if self.check_product_existence(id):
+            return id
+        raise serializers.ValidationError(f"The id {id} wasn't found at Luizalabs products API")
 
     class Meta:
         model = Product
         fields = (
-            "product_id",
+            "id",
             "created_at",
             "updated_at",
         )
 
 
 class FavoriteSerializer(serializers.Serializer):
-    product_id = serializers.UUIDField()
+    id = serializers.UUIDField()
 
-    def validate_product_id(self, product_id):
+    def validate_id(self, id):
         try:
-            Product.objects.get(product_id=product_id)
+            Product.objects.get(id=id)
         except ObjectDoesNotExist:
-            raise serializers.ValidationError("Given product_id does not exists")
+            raise serializers.ValidationError("Given id does not exists")
         else:
-            return product_id
+            return id
 
 
 class FavoriteListSerializer(serializers.Serializer):

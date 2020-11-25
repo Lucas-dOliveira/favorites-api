@@ -78,7 +78,7 @@ def test_product_list(client_api):
     assert response.status_code == status.HTTP_200_OK
     assert len(response.data) == 1
     product_result = response.data[0]
-    assert str(product.product_id) == product_result["product_id"]
+    assert str(product.id) == product_result["id"]
     assert isoparse(str(product.created_at)) == isoparse(product_result["created_at"])
     assert isoparse(str(product.updated_at)) == isoparse(product_result["updated_at"])
 
@@ -86,25 +86,25 @@ def test_product_list(client_api):
 @pytest.mark.freeze_time("2020-12-07")
 @mock.patch("apps.favorites.serializers.ProductSerializer.check_product_existence")
 def test_product_create(check_product_mock, client_api):
-    product_payload = {"product_id": "08e79fe7-3957-4a7c-b423-fd6ccebd9baf"}
-    check_product_mock.return_value = product_payload["product_id"]
+    product_payload = {"id": "08e79fe7-3957-4a7c-b423-fd6ccebd9baf"}
+    check_product_mock.return_value = product_payload["id"]
 
     url = reverse("favorites:products-list")
     response = client_api.post(url, product_payload)
 
     product_result = response.data
     assert response.status_code == status.HTTP_201_CREATED
-    assert product_payload["product_id"] in product_result["product_id"]
+    assert product_payload["id"] in product_result["id"]
     assert product_result["created_at"] == "2020-12-07T00:00:00Z"
     assert product_result["updated_at"] == "2020-12-07T00:00:00Z"
     check_product_mock.assert_called_once()
-    assert str(check_product_mock.call_args[0][0]) == product_payload["product_id"]
+    assert str(check_product_mock.call_args[0][0]) == product_payload["id"]
 
 
 def test_product_delete(client_api):
     product = ProductFactory()
 
-    url = reverse("favorites:products-detail", [product.product_id])
+    url = reverse("favorites:products-detail", [product.id])
     response = client_api.delete(url)
 
     with pytest.raises(ObjectDoesNotExist):
@@ -126,7 +126,7 @@ def test_favorite_list(search_product_mock, luizalabs_product, client_api):
 
     assert response.status_code == status.HTTP_200_OK
     search_product_mock.assert_called_once()
-    assert str(search_product_mock.call_args[0][0]) == product.product_id
+    assert str(search_product_mock.call_args[0][0]) == product.id
 
     favorite_response = response.data[0]
     assert luizalabs_product["id"] == favorite_response["id"]
@@ -140,14 +140,14 @@ def test_favorite_create(client_api):
     customer = CustomerFactory()
     product = ProductFactory()
 
-    payload = {"product_id": str(product.product_id)}
+    payload = {"id": str(product.id)}
 
     url = reverse("favorites:customer-favorites-list", [customer.id])
     response = client_api.post(url, payload)
     assert response.status_code == status.HTTP_201_CREATED
 
     customer.refresh_from_db()
-    assert str(customer.favorites.first().product_id) == product.product_id
+    assert str(customer.favorites.first().id) == product.id
 
 
 def test_favorite_create_already_created_favorite(client_api):
@@ -155,7 +155,7 @@ def test_favorite_create_already_created_favorite(client_api):
     product = ProductFactory()
     customer.favorites.add(product)
 
-    payload = {"product_id": str(product.product_id)}
+    payload = {"id": str(product.id)}
 
     url = reverse("favorites:customer-favorites-list", [customer.id])
     response = client_api.post(url, payload)
@@ -165,12 +165,12 @@ def test_favorite_create_already_created_favorite(client_api):
 def test_favorite_create_invalid_product(client_api):
     customer = CustomerFactory()
 
-    payload = {"product_id": uuid4()}
+    payload = {"id": uuid4()}
 
     url = reverse("favorites:customer-favorites-list", [customer.id])
     response = client_api.post(url, payload)
 
-    expected_response = {"product_id": ["Given product_id does not exists"]}
+    expected_response = {"id": ["Given id does not exists"]}
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json() == expected_response
@@ -181,7 +181,7 @@ def test_favorite_destroy(client_api):
     product = ProductFactory()
     customer.favorites.add(product)
 
-    url = reverse("favorites:customer-favorites-detail", [customer.id, product.product_id])
+    url = reverse("favorites:customer-favorites-detail", [customer.id, product.id])
     response = client_api.delete(url)
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
@@ -193,7 +193,7 @@ def test_favorite_destroy_already_destroyed_favorite(client_api):
     customer = CustomerFactory()
     product = ProductFactory()
 
-    url = reverse("favorites:customer-favorites-detail", [customer.id, product.product_id])
+    url = reverse("favorites:customer-favorites-detail", [customer.id, product.id])
     response = client_api.delete(url)
     assert response.status_code == status.HTTP_304_NOT_MODIFIED
 
@@ -203,7 +203,7 @@ def test_favorite_destroy_invalid_product(client_api):
 
     url = reverse("favorites:customer-favorites-detail", [customer.id, uuid4()])
     response = client_api.delete(url)
-    expected_response = {"product_id": ["Given product_id does not exists"]}
+    expected_response = {"id": ["Given id does not exists"]}
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json() == expected_response
@@ -216,13 +216,13 @@ def test_favorite_retrieve(search_product_mock, luizalabs_product, client_api):
     customer.favorites.add(product)
     search_product_mock.return_value = luizalabs_product
 
-    url = reverse("favorites:customer-favorites-detail", [customer.id, product.product_id])
+    url = reverse("favorites:customer-favorites-detail", [customer.id, product.id])
     response = client_api.get(url)
     assert response.status_code == status.HTTP_200_OK
 
     assert response.status_code == status.HTTP_200_OK
     search_product_mock.assert_called_once()
-    assert str(search_product_mock.call_args[0][0]) == product.product_id
+    assert str(search_product_mock.call_args[0][0]) == product.id
 
     favorite_response = response.data
     assert luizalabs_product["id"] == favorite_response["id"]

@@ -20,7 +20,7 @@ class UUIDModel(models.Model):
 
 class Product(TimestampModel):
     serializer = "apps.favorites.serializers.ProductSerializer"
-    product_id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(primary_key=True)
 
 
 class Customer(UUIDModel, TimestampModel):

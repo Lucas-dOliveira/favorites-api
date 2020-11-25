@@ -32,48 +32,48 @@ def test_product_serializer():
     serializer = ProductSerializer(product)
     data = serializer.data
 
-    assert "product_id" in data
+    assert "id" in data
     assert "created_at" in data
     assert "updated_at" in data
 
 
 @mock.patch("apps.favorites.serializers.ProductSerializer.check_product_existence")
-def test_product_serializer_validate_inexistent_product(check_product_existence_mock, product_id):
+def test_product_serializer_validate_inexistent_product(check_product_existence_mock, id):
     check_product_existence_mock.return_value = False
-    request_data = {"product_id": product_id}
+    request_data = {"id": id}
     serializer = ProductSerializer(data=request_data)
     with pytest.raises(ValidationError) as exc:
         serializer.is_valid(raise_exception=True)
-    assert f"The product_id {product_id} wasn't found at Luizalabs products API" in str(exc)
+    assert f"The id {id} wasn't found at Luizalabs products API" in str(exc)
     check_product_existence_mock.assert_called_once()
-    assert str(check_product_existence_mock.call_args[0][0]) == product_id
+    assert str(check_product_existence_mock.call_args[0][0]) == id
 
 
 @mock.patch("apps.favorites.serializers.ProductSerializer.check_product_existence")
-def test_product_serializer_validate_existent_product(check_product_existence_mock, product_id):
+def test_product_serializer_validate_existent_product(check_product_existence_mock, id):
     check_product_existence_mock.return_value = True
-    request_data = {"product_id": product_id}
+    request_data = {"id": id}
     serializer = ProductSerializer(data=request_data)
     assert serializer.is_valid(raise_exception=True)
-    assert "product_id" in serializer.data
+    assert "id" in serializer.data
     check_product_existence_mock.assert_called_once()
-    assert str(check_product_existence_mock.call_args[0][0]) == product_id
+    assert str(check_product_existence_mock.call_args[0][0]) == id
 
 
-def test_favorites_serializer_with_inexistent_product(product_id):
-    request_data = {"product_id": product_id}
+def test_favorites_serializer_with_inexistent_product(id):
+    request_data = {"id": id}
     serializer = FavoriteSerializer(data=request_data)
     with pytest.raises(ValidationError) as exc:
         serializer.is_valid(raise_exception=True)
-    assert "Given product_id does not exists" in str(exc)
+    assert "Given id does not exists" in str(exc)
 
 
 def test_favorites_serializer_with_existent_product():
     product = ProductFactory()
-    request_data = {"product_id": product.product_id}
+    request_data = {"id": product.id}
     serializer = FavoriteSerializer(data=request_data)
     assert serializer.is_valid(raise_exception=True)
-    assert "product_id" in serializer.data
+    assert "id" in serializer.data
 
 
 def test_favorites_list_serializer(luizalabs_product):
