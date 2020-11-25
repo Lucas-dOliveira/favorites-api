@@ -1,8 +1,8 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
-from .mixins import ExternalLuizalabsAPIMixin
 from .models import Customer, Product
+from apps.core.mixins import ExternalLuizalabsAPIMixin
 
 
 class CustomerSerializer(serializers.ModelSerializer):

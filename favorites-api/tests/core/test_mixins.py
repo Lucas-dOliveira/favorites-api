@@ -4,7 +4,7 @@ import pytest
 import responses
 from rest_framework import status
 
-from apps.favorites.mixins import ExternalLuizalabsAPIMixin
+from apps.core.mixins import ExternalLuizalabsAPIMixin
 
 
 @pytest.fixture
@@ -12,8 +12,8 @@ def external_luizalabs_api_mixin():
     return ExternalLuizalabsAPIMixin()
 
 
-@mock.patch("apps.favorites.mixins.cache")
-@mock.patch("apps.favorites.mixins.env")
+@mock.patch("apps.core.mixins.cache")
+@mock.patch("apps.core.mixins.env")
 def test_external_luizalabs_store_empty_product(env_mock, cache_mock, external_luizalabs_api_mixin, id):
     timeout = 10
     env_mock.int.return_value = timeout
@@ -22,8 +22,8 @@ def test_external_luizalabs_store_empty_product(env_mock, cache_mock, external_l
     cache_mock.add.assert_called_once_with(id, {}, timeout)
 
 
-@mock.patch("apps.favorites.mixins.cache")
-@mock.patch("apps.favorites.mixins.env")
+@mock.patch("apps.core.mixins.cache")
+@mock.patch("apps.core.mixins.env")
 def test_external_luizalabs_store_product(
     env_mock, cache_mock, external_luizalabs_api_mixin, id, luizalabs_product
 ):
@@ -34,7 +34,7 @@ def test_external_luizalabs_store_product(
     cache_mock.add.assert_called_once_with(id, luizalabs_product, timeout)
 
 
-@mock.patch("apps.favorites.mixins.cache")
+@mock.patch("apps.core.mixins.cache")
 def test_external_luizalabs_search_product_on_cache(
     cache_mock, external_luizalabs_api_mixin, id, luizalabs_product
 ):
@@ -45,8 +45,8 @@ def test_external_luizalabs_search_product_on_cache(
 
 
 @responses.activate
-@mock.patch("apps.favorites.mixins.env")
-@mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.store_product_on_cache")
+@mock.patch("apps.core.mixins.env")
+@mock.patch("apps.core.mixins.ExternalLuizalabsAPIMixin.store_product_on_cache")
 def test_external_luizalabs_search_product_on_external_api(
     store_product_mock, env_mock, external_luizalabs_api_mixin, id, luizalabs_product
 ):
@@ -67,8 +67,8 @@ def test_external_luizalabs_search_product_on_external_api(
 
 
 @responses.activate
-@mock.patch("apps.favorites.mixins.env")
-@mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.store_product_on_cache")
+@mock.patch("apps.core.mixins.env")
+@mock.patch("apps.core.mixins.ExternalLuizalabsAPIMixin.store_product_on_cache")
 def test_external_luizalabs_search_invalid_product_on_external_api(
     store_product_mock, env_mock, external_luizalabs_api_mixin, id
 ):
@@ -90,8 +90,8 @@ def test_external_luizalabs_search_invalid_product_on_external_api(
     store_product_mock.assert_called_once_with(id, {})
 
 
-@mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product_on_cache")
-@mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product_on_external_api")
+@mock.patch("apps.core.mixins.ExternalLuizalabsAPIMixin.search_product_on_cache")
+@mock.patch("apps.core.mixins.ExternalLuizalabsAPIMixin.search_product_on_external_api")
 def test_external_luizalabs_search_product_exists_on_cache(
     search_external_api_mock, search_cache_mock, external_luizalabs_api_mixin, id, luizalabs_product
 ):
@@ -103,8 +103,8 @@ def test_external_luizalabs_search_product_exists_on_cache(
     search_external_api_mock.assert_not_called()
 
 
-@mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product_on_cache")
-@mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product_on_external_api")
+@mock.patch("apps.core.mixins.ExternalLuizalabsAPIMixin.search_product_on_cache")
+@mock.patch("apps.core.mixins.ExternalLuizalabsAPIMixin.search_product_on_external_api")
 def test_external_luizalabs_search_product_exists_empty_on_cache(
     search_external_api_mock, search_cache_mock, external_luizalabs_api_mixin, id
 ):
@@ -116,8 +116,8 @@ def test_external_luizalabs_search_product_exists_empty_on_cache(
     search_external_api_mock.assert_not_called()
 
 
-@mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product_on_cache")
-@mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product_on_external_api")
+@mock.patch("apps.core.mixins.ExternalLuizalabsAPIMixin.search_product_on_cache")
+@mock.patch("apps.core.mixins.ExternalLuizalabsAPIMixin.search_product_on_external_api")
 def test_external_luizalabs_search_product_exists_on_api(
     search_external_api_mock, search_cache_mock, external_luizalabs_api_mixin, id, luizalabs_product
 ):
@@ -131,8 +131,8 @@ def test_external_luizalabs_search_product_exists_on_api(
     search_external_api_mock.assert_called_once_with(id)
 
 
-@mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product_on_cache")
-@mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product_on_external_api")
+@mock.patch("apps.core.mixins.ExternalLuizalabsAPIMixin.search_product_on_cache")
+@mock.patch("apps.core.mixins.ExternalLuizalabsAPIMixin.search_product_on_external_api")
 def test_external_luizalabs_search_product_do_not_exists_on_api(
     search_external_api_mock,
     search_cache_mock,
@@ -156,7 +156,7 @@ def test_external_luizalabs_search_product_do_not_exists_on_api(
         ({"valid": "payload"}, True),
     ),
 )
-@mock.patch("apps.favorites.mixins.ExternalLuizalabsAPIMixin.search_product")
+@mock.patch("apps.core.mixins.ExternalLuizalabsAPIMixin.search_product")
 def test_external_luizalabs_check_product_existence(
     search_product_mock, search_output, expected_response, external_luizalabs_api_mixin, id
 ):
