@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     # swagger
     "drf_yasg",
     # apps
+    "apps.core",
     "apps.favorites",
 ]
 
