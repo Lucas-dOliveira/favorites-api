@@ -27,6 +27,7 @@ psycopg2 = "^2.8.6"
 django-redis = "^4.12.1"
 drf-nested-routers = "^0.92.5"
 djangorestframework-simplejwt = "^4.6.0"
+drf-yasg = "^1.20.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
