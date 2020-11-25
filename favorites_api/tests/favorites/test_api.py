@@ -134,6 +134,7 @@ def test_favorite_list(search_product_mock, luizalabs_product, client_api):
     assert luizalabs_product["image"] == favorite_response["image"]
     assert luizalabs_product["brand"] == favorite_response["brand"]
     assert luizalabs_product["title"] == favorite_response["title"]
+    assert luizalabs_product["reviewScore"] == favorite_response["reviewScore"]
 
 
 def test_favorite_create(client_api):
@@ -230,3 +231,4 @@ def test_favorite_retrieve(search_product_mock, luizalabs_product, client_api):
     assert luizalabs_product["image"] == favorite_response["image"]
     assert luizalabs_product["brand"] == favorite_response["brand"]
     assert luizalabs_product["title"] == favorite_response["title"]
+    assert luizalabs_product["reviewScore"] == favorite_response["reviewScore"]

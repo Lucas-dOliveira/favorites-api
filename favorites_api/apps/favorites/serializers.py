@@ -55,3 +55,4 @@ class FavoriteListSerializer(serializers.Serializer):
     price = serializers.DecimalField(max_digits=10, decimal_places=2)
     image = serializers.URLField()
     brand = serializers.CharField(max_length=100)
+    reviewScore = serializers.FloatField(allow_null=True)

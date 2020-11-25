@@ -85,3 +85,4 @@ def test_favorites_list_serializer(luizalabs_product):
     assert "price" in data
     assert "image" in data
     assert "brand" in data
+    assert "reviewScore" in data
