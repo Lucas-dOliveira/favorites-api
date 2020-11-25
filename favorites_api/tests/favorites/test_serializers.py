@@ -76,8 +76,8 @@ def test_favorites_serializer_with_existent_product():
     assert "product_id" in serializer.data
 
 
-def test_favorites_list_serializer(detailed_product):
-    serializer = FavoriteListSerializer(detailed_product)
+def test_favorites_list_serializer(luizalabs_product):
+    serializer = FavoriteListSerializer(luizalabs_product)
     data = serializer.data
 
     assert "id" in data

@@ -1,6 +1,5 @@
 import pytest
-
-from apps.favorites.models import DetailedProduct
+from rest_framework.test import APIClient
 
 
 @pytest.fixture
@@ -19,6 +18,7 @@ def luizalabs_product(product_id):
     }
 
 
-@pytest.fixture
-def detailed_product(luizalabs_product):
-    return DetailedProduct(**luizalabs_product)
+@pytest.fixture()
+def client_api():
+    client = APIClient()
+    return client

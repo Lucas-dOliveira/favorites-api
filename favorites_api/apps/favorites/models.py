@@ -29,12 +29,3 @@ class Customer(UUIDModel, TimestampModel):
     email = models.EmailField(unique=True, db_index=True)
     name = models.CharField(max_length=128)
     favorites = models.ManyToManyField(Product, related_name="customer_favorites")
-
-
-class DetailedProduct:
-    def __init__(self, id, price, image, brand, title):
-        self.id = id
-        self.price = price
-        self.image = image
-        self.brand = brand
-        self.title = title
