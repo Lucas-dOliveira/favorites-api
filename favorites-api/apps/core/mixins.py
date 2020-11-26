@@ -1,15 +1,12 @@
 import requests
+from django.conf import settings
 from django.core.cache import cache
-from environs import Env
 from rest_framework import status
-
-env = Env()
-env.read_env()
 
 
 class ExternalLuizalabsAPIMixin:
     def store_product_on_cache(self, id, data):
-        cache.add(id, data, env.int("FAVORITES_EXPIRE_TIMEOUT"))
+        cache.add(id, data, settings.FAVORITES_EXPIRE_TIMEOUT)
 
     def search_product_on_cache(self, id):
         return cache.get(id)
@@ -19,7 +16,7 @@ class ExternalLuizalabsAPIMixin:
         Search given id on external LUIZALABS_API.
         The value returned from the API will be automatically stored on cache to avoid further requests.
         """
-        luizalabs_api_url = env("LUIZALABS_API_URL")
+        luizalabs_api_url = settings.LUIZALABS_API_URL
         url = f"{luizalabs_api_url}/api/product/{id}/"
 
         response = requests.request("GET", url)

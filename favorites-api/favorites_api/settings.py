@@ -129,3 +129,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATIC_URL = "/static/"
 
 django_heroku.settings(locals())
+
+# Project configuration
+
+FAVORITES_EXPIRE_TIMEOUT = env.int("FAVORITES_EXPIRE_TIMEOUT")
+LUIZALABS_API_URL = env("LUIZALABS_API_URL")

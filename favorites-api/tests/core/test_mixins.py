@@ -2,6 +2,7 @@ from unittest import mock
 
 import pytest
 import responses
+from django.test import override_settings
 from rest_framework import status
 
 from apps.core.mixins import ExternalLuizalabsAPIMixin
@@ -13,22 +14,18 @@ def external_luizalabs_api_mixin():
 
 
 @mock.patch("apps.core.mixins.cache")
-@mock.patch("apps.core.mixins.env")
-def test_external_luizalabs_store_empty_product(env_mock, cache_mock, external_luizalabs_api_mixin, id):
+@override_settings(FAVORITES_EXPIRE_TIMEOUT=10)
+def test_external_luizalabs_store_empty_product(cache_mock, external_luizalabs_api_mixin, id):
     timeout = 10
-    env_mock.int.return_value = timeout
 
     external_luizalabs_api_mixin.store_product_on_cache(id, {})
     cache_mock.add.assert_called_once_with(id, {}, timeout)
 
 
 @mock.patch("apps.core.mixins.cache")
-@mock.patch("apps.core.mixins.env")
-def test_external_luizalabs_store_product(
-    env_mock, cache_mock, external_luizalabs_api_mixin, id, luizalabs_product
-):
+@override_settings(FAVORITES_EXPIRE_TIMEOUT=10)
+def test_external_luizalabs_store_product(cache_mock, external_luizalabs_api_mixin, id, luizalabs_product):
     timeout = 10
-    env_mock.int.return_value = timeout
 
     external_luizalabs_api_mixin.store_product_on_cache(id, luizalabs_product)
     cache_mock.add.assert_called_once_with(id, luizalabs_product, timeout)
@@ -45,13 +42,12 @@ def test_external_luizalabs_search_product_on_cache(
 
 
 @responses.activate
-@mock.patch("apps.core.mixins.env")
 @mock.patch("apps.core.mixins.ExternalLuizalabsAPIMixin.store_product_on_cache")
+@override_settings(LUIZALABS_API_URL="http://local-challenge-api.luizalabs.com")
 def test_external_luizalabs_search_product_on_external_api(
-    store_product_mock, env_mock, external_luizalabs_api_mixin, id, luizalabs_product
+    store_product_mock, external_luizalabs_api_mixin, id, luizalabs_product
 ):
     url = "http://local-challenge-api.luizalabs.com"
-    env_mock.return_value = url
 
     expected_url = f"{url}/api/product/{id}/"
     responses.add(
@@ -67,13 +63,12 @@ def test_external_luizalabs_search_product_on_external_api(
 
 
 @responses.activate
-@mock.patch("apps.core.mixins.env")
 @mock.patch("apps.core.mixins.ExternalLuizalabsAPIMixin.store_product_on_cache")
+@override_settings(LUIZALABS_API_URL="http://local-challenge-api.luizalabs.com")
 def test_external_luizalabs_search_invalid_product_on_external_api(
-    store_product_mock, env_mock, external_luizalabs_api_mixin, id
+    store_product_mock, external_luizalabs_api_mixin, id
 ):
     url = "http://local-challenge-api.luizalabs.com"
-    env_mock.return_value = url
 
     expected_response = {"error_message": f"Product {id} not found", "code": "not_found"}
 
