@@ -11,9 +11,9 @@ To avoid high use of external resources and improve performance, the results of 
 ## Requirements
 
 - Python (Tested and developed on 3.9)
-- [Poetry](https://python-poetry.org/docs/#installation)
-- [Redis](https://redis.io/topics/quickstart)
-- [PostgreSQL](https://www.postgresql.org/download/)
+- [Poetry](https://python-poetry.org/docs/#installation) (Locked using 1.1.4)
+- [Redis](https://redis.io/topics/quickstart) (6.0+)
+- [PostgreSQL](https://www.postgresql.org/download/) (12.5+)
 
 ## Setup project
 
@@ -258,6 +258,8 @@ curl --request DELETE \
 No body returned
 
 ### Create Product
+
+**To a product be valid on this route, this product must exist on external luizalabs API, in case it doesn't exist, a validation error will be returned.**
 
 #### Request
 
