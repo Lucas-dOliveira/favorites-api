@@ -8,7 +8,7 @@ This API store customers and its favorite products from Luizalabs products API, 
 
 To avoid high use of external resources and improve performance, the results of Luizalabs products API are stored in cache for a configurable amount of time.
 
-## Requirements:
+## Requirements
 
 - Python (Tested and developed on 3.9)
 - [Poetry](https://python-poetry.org/docs/#installation)
@@ -77,6 +77,9 @@ To setup the project just follow these steps.
     ```
     This command is using the port 8000 for example, but you can use other ports.
 
+    To use most of the requests you will have to authenticate with the created user credentials. Favorites-API use a JWT
+    authentication, so it is necessary to include the header `Authorization` on requests, the prefix to include the token is `Bearer`
+
 ## Running tests
 
 To run unit tests for the project there is a shortcut command on Makefile, run this command:
@@ -86,7 +89,8 @@ make test
 
 ## Rest API
 
-The Favorites API is described below
+You can access Favorites API documentation on swagger by running the project and accessing `/swagger/` route.
+The Favorites API is described below.
 
 ### Authenticate
 
